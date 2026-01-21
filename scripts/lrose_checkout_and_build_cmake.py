@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-#===========================================================================
+# ===========================================================================
 #
 # Checkout and build LROSE, using cmake.
 #
@@ -16,7 +16,7 @@
 #
 # Use --help to see the command line options.
 #
-#===========================================================================
+# ===========================================================================
 
 from __future__ import print_function
 import os
@@ -30,6 +30,7 @@ from datetime import date
 from datetime import timedelta
 import glob
 from sys import platform
+
 
 def main():
 
@@ -68,175 +69,227 @@ def main():
     # parse the command line
 
     usage = "usage: " + thisScriptName + " [options]"
-    homeDir = os.environ['HOME']
-    prefixDirDefault = os.path.join(homeDir, 'lrose')
-    buildDirDefault = '/tmp/lrose-build'
-    logDirDefault = '/tmp/lrose-build/logs'
+    homeDir = os.environ["HOME"]
+    prefixDirDefault = os.path.join(homeDir, "lrose")
+    buildDirDefault = "/tmp/lrose-build"
+    logDirDefault = "/tmp/lrose-build/logs"
     parser = OptionParser(usage)
-    parser.add_option('--clean',
-                      dest='clean', default=False,
-                      action="store_true",
-                      help='Cleanup tmp build dir')
-    parser.add_option('--debug',
-                      dest='debug', default=True,
-                      action="store_true",
-                      help='Set debugging on')
-    parser.add_option('--verbose',
-                      dest='verbose', default=False,
-                      action="store_true",
-                      help='Set verbose debugging on')
-    parser.add_option('--package',
-                      dest='package', default='lrose-core',
-                      help='Package name. Options are: ' + \
-                      'lrose-core (default), lrose-radx, lrose-cidd, apar, samurai')
-    parser.add_option('--releaseDate',
-                      dest='releaseDate', default='latest',
-                      help='Date from which to compute tag for git clone. Applies if --tag is not used.')
-    parser.add_option('--tag',
-                      dest='tag', default='master',
-                      help='Tag to check out lrose. Overrides --releaseDate')
-    parser.add_option('--prefix',
-                      dest='prefix', default=prefixDirDefault,
-                      help='Install directory, default: ' + prefixDirDefault)
-    parser.add_option('--buildDir',
-                      dest='buildDir', default=buildDirDefault,
-                      help='Temporary build dir, default: ' + buildDirDefault)
-    parser.add_option('--logDir',
-                      dest='logDir', default=logDirDefault,
-                      help='Logging dir, default: ' + logDirDefault)
-    parser.add_option('--static',
-                      dest='static', default=False,
-                      action="store_true",
-                      help='use static linking, default is dynamic')
-    parser.add_option('--installAllRuntimeLibs',
-                      dest='installAllRuntimeLibs', default=False,
-                      action="store_true",
-                      help=\
-                      'Install dynamic runtime libraries for all binaries, ' + \
-                      'in a directory relative to the bin dir. ' + \
-                      'System libraries are included.')
-    parser.add_option('--installLroseRuntimeLibs',
-                      dest='installLroseRuntimeLibs', default=False,
-                      action="store_true",
-                      help=\
-                      'Install dynamic runtime lrose libraries for all binaries, ' + \
-                      'in a directory relative to the bin dir. ' + \
-                      'System libraries are not included.')
-    parser.add_option('--buildNetcdf',
-                      dest='buildNetcdf', default=False,
-                      action="store_true",
-                      help='Build netcdf and hdf5 from source')
-    parser.add_option('--netcdfPrefix',
-                      dest='netcdfPrefix', default=prefixDirDefault,
-                      help='Netcdf install directory, default: ' + prefixDirDefault)
-    parser.add_option('--cmake3',
-                      dest='use_cmake3', default=False,
-                      action="store_true",
-                      help='Use cmake3 instead of cmake')
-    parser.add_option('--noRpath',
-                      dest='noRpath', default=False,
-                      action="store_true",
-                      help='Do not set a run path at link time - use this for building rpm packages.')
-    parser.add_option('--withJasper',
-                      dest='withJasper', default=False,
-                      action="store_true",
-                      help='Set if jasper library is installed. This provides support for jpeg compression in grib files.')
-    parser.add_option('--verboseMake',
-                      dest='verboseMake', default=False,
-                      action="store_true",
-                      help='Verbose output for make, default is summary')
-    parser.add_option('--iscray',
-                      dest='iscray', default=False,
-                      action="store_true",
-                      help='True if the Cray compiler is used')
-    parser.add_option('--isfujitsu',
-                      dest='isfujitsu', default=False,
-                      action="store_true",
-                      help='True if the Fujitsu compiler is used')
-    
+    parser.add_option(
+        "--clean", dest="clean", default=False, action="store_true", help="Cleanup tmp build dir"
+    )
+    parser.add_option(
+        "--debug", dest="debug", default=True, action="store_true", help="Set debugging on"
+    )
+    parser.add_option(
+        "--verbose",
+        dest="verbose",
+        default=False,
+        action="store_true",
+        help="Set verbose debugging on",
+    )
+    parser.add_option(
+        "--package",
+        dest="package",
+        default="lrose-core",
+        help="Package name. Options are: "
+        + "lrose-core (default), lrose-radx, lrose-cidd, apar, samurai",
+    )
+    parser.add_option(
+        "--releaseDate",
+        dest="releaseDate",
+        default="latest",
+        help="Date from which to compute tag for git clone. Applies if --tag is not used.",
+    )
+    parser.add_option(
+        "--tag",
+        dest="tag",
+        default="master",
+        help="Tag to check out lrose. Overrides --releaseDate",
+    )
+    parser.add_option(
+        "--prefix",
+        dest="prefix",
+        default=prefixDirDefault,
+        help="Install directory, default: " + prefixDirDefault,
+    )
+    parser.add_option(
+        "--buildDir",
+        dest="buildDir",
+        default=buildDirDefault,
+        help="Temporary build dir, default: " + buildDirDefault,
+    )
+    parser.add_option(
+        "--logDir",
+        dest="logDir",
+        default=logDirDefault,
+        help="Logging dir, default: " + logDirDefault,
+    )
+    parser.add_option(
+        "--static",
+        dest="static",
+        default=False,
+        action="store_true",
+        help="use static linking, default is dynamic",
+    )
+    parser.add_option(
+        "--installAllRuntimeLibs",
+        dest="installAllRuntimeLibs",
+        default=False,
+        action="store_true",
+        help="Install dynamic runtime libraries for all binaries, "
+        + "in a directory relative to the bin dir. "
+        + "System libraries are included.",
+    )
+    parser.add_option(
+        "--installLroseRuntimeLibs",
+        dest="installLroseRuntimeLibs",
+        default=False,
+        action="store_true",
+        help="Install dynamic runtime lrose libraries for all binaries, "
+        + "in a directory relative to the bin dir. "
+        + "System libraries are not included.",
+    )
+    parser.add_option(
+        "--buildNetcdf",
+        dest="buildNetcdf",
+        default=False,
+        action="store_true",
+        help="Build netcdf and hdf5 from source",
+    )
+    parser.add_option(
+        "--netcdfPrefix",
+        dest="netcdfPrefix",
+        default=prefixDirDefault,
+        help="Netcdf install directory, default: " + prefixDirDefault,
+    )
+    parser.add_option(
+        "--cmake3",
+        dest="use_cmake3",
+        default=False,
+        action="store_true",
+        help="Use cmake3 instead of cmake",
+    )
+    parser.add_option(
+        "--noRpath",
+        dest="noRpath",
+        default=False,
+        action="store_true",
+        help="Do not set a run path at link time - use this for building rpm packages.",
+    )
+    parser.add_option(
+        "--withJasper",
+        dest="withJasper",
+        default=False,
+        action="store_true",
+        help="Set if jasper library is installed. This provides support for jpeg compression in grib files.",
+    )
+    parser.add_option(
+        "--verboseMake",
+        dest="verboseMake",
+        default=False,
+        action="store_true",
+        help="Verbose output for make, default is summary",
+    )
+    parser.add_option(
+        "--iscray",
+        dest="iscray",
+        default=False,
+        action="store_true",
+        help="True if the Cray compiler is used",
+    )
+    parser.add_option(
+        "--isfujitsu",
+        dest="isfujitsu",
+        default=False,
+        action="store_true",
+        help="True if the Fujitsu compiler is used",
+    )
+
     (options, args) = parser.parse_args()
-    
+
     # sanity check: we could not use Cray and Fujitsu compilers at the same time
-    assert not (options.iscray and options.isfujitsu), "iscray and isfujitsu could not be both True..."
-            
-    if (options.verbose):
+    assert not (
+        options.iscray and options.isfujitsu
+    ), "iscray and isfujitsu could not be both True..."
+
+    if options.verbose:
         options.debug = True
 
     # check package name
 
-    if (options.package != "lrose-core" and
-        options.package != "lrose-radx" and
-        options.package != "lrose-cidd" and
-        options.package != "apar" and
-        options.package != "samurai") :
+    if (
+        options.package != "lrose-core"
+        and options.package != "lrose-radx"
+        and options.package != "lrose-cidd"
+        and options.package != "apar"
+        and options.package != "samurai"
+    ):
         print("ERROR: invalid package name: %s:" % options.package, file=sys.stderr)
-        print("  options: lrose-core, lrose-radx, lrose-cidd, samurai",
-              file=sys.stderr)
+        print("  options: lrose-core, lrose-radx, lrose-cidd, samurai", file=sys.stderr)
         sys.exit(1)
 
     # For Centos 7, use cmake3
 
     getOSType()
-    if (osId == "centos" and osVersion == "7"):
+    if osId == "centos" and osVersion == "7":
         options.use_cmake3 = True
 
     # cmake version
 
     global cmakeExec
-    cmakeExec = 'cmake'
-    if (options.use_cmake3):
-        cmakeExec = 'cmake3'
-    
+    cmakeExec = "cmake"
+    if options.use_cmake3:
+        cmakeExec = "cmake3"
+
     # for CIDD, set to static linkage
-    if (options.package == "lrose-cidd"):
+    if options.package == "lrose-cidd":
         options.static = True
-        
+
     package = options.package
     runtimeLibRelDir = package + "_runtime_libs"
 
     # runtime
 
     now = time.gmtime()
-    nowTime = datetime(now.tm_year, now.tm_mon, now.tm_mday,
-                       now.tm_hour, now.tm_min, now.tm_sec)
+    nowTime = datetime(now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
     dateStr = nowTime.strftime("%Y%m%d")
 
     # set release tag
 
-    if (options.tag != "master"):
+    if options.tag != "master":
         releaseTag = options.tag
         releaseName = options.tag
         releaseDate = "not-set"
-    elif (options.releaseDate == "latest"):
-        releaseDate = datetime(int(dateStr[0:4]),
-                               int(dateStr[4:6]),
-                               int(dateStr[6:8]))
+    elif options.releaseDate == "latest":
+        releaseDate = datetime(int(dateStr[0:4]), int(dateStr[4:6]), int(dateStr[6:8]))
         releaseTag = "master"
         releaseName = options.package + "-" + dateStr
     else:
         # check we have a good release date
-        releaseDate = datetime(int(options.releaseDate[0:4]),
-                               int(options.releaseDate[4:6]),
-                               int(options.releaseDate[6:8]))
+        releaseDate = datetime(
+            int(options.releaseDate[0:4]),
+            int(options.releaseDate[4:6]),
+            int(options.releaseDate[6:8]),
+        )
         releaseTag = options.package + "-" + options.releaseDate[0:8]
         releaseName = releaseTag
 
     # set directories
-    
+
     coreDir = os.path.join(options.buildDir, "lrose-core")
     displaysDir = os.path.join(options.buildDir, "lrose-displays")
     netcdfDir = os.path.join(options.buildDir, "lrose-netcdf")
     codebaseDir = os.path.join(coreDir, "codebase")
 
     prefixDir = options.prefix
-    prefixBinDir = os.path.join(prefixDir, 'bin')
-    prefixLibDir = os.path.join(prefixDir, 'lib')
-    prefixIncludeDir = os.path.join(prefixDir, 'include')
-    prefixShareDir = os.path.join(prefixDir, 'share')
+    prefixBinDir = os.path.join(prefixDir, "bin")
+    prefixLibDir = os.path.join(prefixDir, "lib")
+    prefixIncludeDir = os.path.join(prefixDir, "include")
+    prefixShareDir = os.path.join(prefixDir, "share")
 
     # debug print
 
-    if (options.debug):
+    if options.debug:
         print("Running %s:" % thisScriptName, file=sys.stderr)
         print("  osId: ", osId, file=sys.stderr)
         print("  osVersion: ", osVersion, file=sys.stderr)
@@ -262,18 +315,18 @@ def main():
         print("  cmakeExec: ", cmakeExec, file=sys.stderr)
         print("  iscray: ", options.iscray, file=sys.stderr)
         print("  isfujitsu: ", options.isfujitsu, file=sys.stderr)
-        
+
     # create build dir
-    
+
     createBuildDir()
 
     # initialize logging
 
-    if (os.path.isdir(options.logDir) == False):
+    if os.path.isdir(options.logDir) == False:
         os.makedirs(options.logDir, exist_ok=True)
-    logPath = os.path.join(options.logDir, "initialize");
+    logPath = os.path.join(options.logDir, "initialize")
     logFp = open(logPath, "w+")
-    
+
     # make dirs
 
     try:
@@ -287,13 +340,13 @@ def main():
 
     # get repos from git
 
-    logPath = prepareLogFile("git-checkout");
+    logPath = prepareLogFile("git-checkout")
     gitCheckout()
 
     # install the distribution-specific makefiles
 
-    if (options.package != "lrose-core"):
-        logPath = prepareLogFile("install-package-makefiles");
+    if options.package != "lrose-core":
+        logPath = prepareLogFile("install-package-makefiles")
         os.chdir(codebaseDir)
         scriptPath = "../build/scripts/installPackageMakefiles.py"
         shellCmd(scriptPath + " --debug --package " + package)
@@ -305,12 +358,12 @@ def main():
 
     # create the CMakeLists files
 
-    if (options.package != "lrose-core"):
-        logPath = prepareLogFile("create-CMakeLists-files");
+    if options.package != "lrose-core":
+        logPath = prepareLogFile("create-CMakeLists-files")
         createCMakeLists()
 
     # create the release information file
-    
+
     createReleaseInfoFile()
 
     # prune any empty directories
@@ -318,9 +371,9 @@ def main():
     prune(codebaseDir)
 
     # build netcdf support
-    
-    if (options.buildNetcdf):
-        logPath = prepareLogFile("build-netcdf");
+
+    if options.buildNetcdf:
+        logPath = prepareLogFile("build-netcdf")
         buildNetcdf()
 
     # build the package
@@ -333,84 +386,89 @@ def main():
     #     bin/${package}_runtime_libs
 
     os.chdir(codebaseDir)
-    if (options.installAllRuntimeLibs):
+    if options.installAllRuntimeLibs:
         scriptPath = "../build/scripts/installOriginLibFiles.py"
-        cmd = scriptPath + \
-              " --binDir " + prefixBinDir + \
-              " --relDir " + runtimeLibRelDir
-        if (options.verbose):
+        cmd = scriptPath + " --binDir " + prefixBinDir + " --relDir " + runtimeLibRelDir
+        if options.verbose:
             cmd = cmd + " --verbose"
-        elif (options.debug):
+        elif options.debug:
             cmd = cmd + " --debug"
         shellCmd(cmd)
-    elif (options.installLroseRuntimeLibs):
+    elif options.installLroseRuntimeLibs:
         scriptPath = "../build/scripts/installOriginLroseLibs.py"
-        cmd = scriptPath + \
-              " --binDir " + prefixBinDir + \
-              " --libDir " + prefixLibDir + \
-              " --relDir " + runtimeLibRelDir
-        if (options.verbose):
+        cmd = (
+            scriptPath
+            + " --binDir "
+            + prefixBinDir
+            + " --libDir "
+            + prefixLibDir
+            + " --relDir "
+            + runtimeLibRelDir
+        )
+        if options.verbose:
             cmd = cmd + " --verbose"
-        elif (options.debug):
+        elif options.debug:
             cmd = cmd + " --debug"
         shellCmd(cmd)
 
     # perform the install
 
-    logPath = prepareLogFile("do-share-install");
-    doShareInstall();
+    logPath = prepareLogFile("do-share-install")
+    doShareInstall()
 
     # check the install
 
-    logPath = prepareLogFile("no-logging");
+    logPath = prepareLogFile("no-logging")
     checkInstall()
 
     # delete the tmp dir
 
-    if (options.clean):
+    if options.clean:
         shutil.rmtree(options.buildDir)
 
     logFp.close()
     sys.exit(0)
 
+
 ########################################################################
 # create the build dir
+
 
 def createBuildDir():
 
     # check if exists already
 
-    if (os.path.isdir(options.buildDir)):
+    if os.path.isdir(options.buildDir):
 
-        print("WARNING: you are about to remove all contents in dir: " + 
-              options.buildDir)
+        print("WARNING: you are about to remove all contents in dir: " + options.buildDir)
         print("===============================================")
         contents = os.listdir(options.buildDir)
         for filename in contents:
             print(("  " + filename))
         print("===============================================")
         answer = "n"
-        if (sys.version_info > (3, 0)):
+        if sys.version_info > (3, 0):
             answer = input("WARNING: do you wish to proceed (y/n)? ")
         else:
             answer = raw_input("WARNING: do you wish to proceed (y/n)? ")
-        if (answer != "y"):
+        if answer != "y":
             print("  aborting ....")
             sys.exit(1)
-                
+
         # remove it
 
         shutil.rmtree(options.buildDir)
 
     # make it clean
-    
-    print(("INFO: you are about to create build dir: " + 
-          options.buildDir))
-    
+
+    print(("INFO: you are about to create build dir: " + options.buildDir))
+
     os.makedirs(options.buildDir, exist_ok=True)
+
 
 ########################################################################
 # check out repos from git
+
 
 def gitCheckout():
 
@@ -419,73 +477,86 @@ def gitCheckout():
     # lrose core
 
     shellCmd("/bin/rm -rf lrose-core")
-    if (options.tag == "master"):
-        shellCmd("git clone https://github.com/NCAR/lrose-core")
+    if options.tag == "master":
+        shellCmd("git clone https://github.com/MetServiceDev/lrose-core")
     else:
-        shellCmd("git clone --branch " + releaseTag + \
-                 " https://github.com/NCAR/lrose-core")
+        shellCmd(
+            "git clone --branch " + releaseTag + " https://github.com/MetServiceDev/lrose-core"
+        )
 
     # netcdf and hdf5
 
-    if (options.buildNetcdf):
+    if options.buildNetcdf:
         shellCmd("/bin/rm -rf lrose-netcdf")
         shellCmd("git clone https://github.com/NCAR/lrose-netcdf")
 
     # color scales and maps in displays repo
 
-    if (options.package != "samurai") :
+    if options.package != "samurai":
         shellCmd("/bin/rm -rf lrose-displays")
         shellCmd("git clone https://github.com/NCAR/lrose-displays")
 
+
 ########################################################################
 # create CMakeLists files
+
 
 def createCMakeLists():
 
     os.chdir(corebaseDir)
 
     staticStr = " "
-    if (options.static):
+    if options.static:
         staticStr = " --static "
 
     m32Str = " "
-    if (options.package == "lrose-cidd"):
+    if options.package == "lrose-cidd":
         m32Str = " --m32 "
 
     withJasperStr = " "
-    if (options.withJasper):
+    if options.withJasper:
         withJasperStr = " --withJasper "
-    
+
     verboseMakeStr = " "
-    if (options.verboseMake):
+    if options.verboseMake:
         verboseMakeStr = " --verboseMake "
-    
+
     debugStr = " "
-    if (options.verbose):
+    if options.verbose:
         debugStr = " --verbose "
-    elif (options.debug):
+    elif options.debug:
         debugStr = " --debug "
 
     dependDirsStr = ""
-    if (options.buildNetcdf):
+    if options.buildNetcdf:
         dependDirsStr = " --dependDirs " + options.netcdfPrefix + " "
 
     iscrayStr = ""
-    if (options.iscray):
-       iscrayStr = " --iscray "
+    if options.iscray:
+        iscrayStr = " --iscray "
 
     isfujitsuStr = ""
-    if (options.isfujitsu):
-       isfujitsuStr = " --isfujitsu "
-            
-    shellCmd("./build/cmake/createCMakeLists.py " +
-             debugStr + staticStr + verboseMakeStr +
-             withJasperStr + dependDirsStr + m32Str +
-             " --prefix " + prefixDir + iscrayStr +
-             isfujitsuStr)
+    if options.isfujitsu:
+        isfujitsuStr = " --isfujitsu "
+
+    shellCmd(
+        "./build/cmake/createCMakeLists.py "
+        + debugStr
+        + staticStr
+        + verboseMakeStr
+        + withJasperStr
+        + dependDirsStr
+        + m32Str
+        + " --prefix "
+        + prefixDir
+        + iscrayStr
+        + isfujitsuStr
+    )
+
 
 ########################################################################
 # write release information file
+
 
 def createReleaseInfoFile():
 
@@ -496,7 +567,7 @@ def createReleaseInfoFile():
     # open info file
 
     releaseInfoPath = os.path.join(coreDir, "ReleaseInfo.txt")
-    info = open(releaseInfoPath, 'w')
+    info = open(releaseInfoPath, "w")
 
     # write release info
 
@@ -508,6 +579,7 @@ def createReleaseInfoFile():
 
     info.close()
 
+
 ########################################################################
 # get string value based on search key
 # the string may span multiple lines
@@ -516,14 +588,15 @@ def createReleaseInfoFile():
 #
 # value is returned
 
+
 def getValueListForKey(path, key):
 
     valueList = []
 
     try:
-        fp = open(path, 'r')
+        fp = open(path, "r")
     except IOError as e:
-        #if (options.verbose):
+        # if (options.verbose):
         #    print("ERROR - ", thisScriptName, file=sys.stderr)
         #    print("  Cannot open file:", path, file=sys.stderr)
         return valueList
@@ -534,24 +607,24 @@ def getValueListForKey(path, key):
     foundKey = False
     multiLine = ""
     for line in lines:
-        if (foundKey == False):
-            if (line[0] == '#'):
+        if foundKey == False:
+            if line[0] == "#":
                 continue
-        if (line.find(key) >= 0):
+        if line.find(key) >= 0:
             foundKey = True
             multiLine = multiLine + line
-            if (line.find("\\") < 0):
-                break;
-        elif (foundKey):
-            if (line[0] == '#'):
+            if line.find("\\") < 0:
                 break
-            if (len(line) < 2):
+        elif foundKey:
+            if line[0] == "#":
                 break
-            multiLine = multiLine + line;
-            if (line.find("\\") < 0):
-                break;
+            if len(line) < 2:
+                break
+            multiLine = multiLine + line
+            if line.find("\\") < 0:
+                break
 
-    if (foundKey == False):
+    if foundKey == False:
         return valueList
 
     multiLine = multiLine.replace(key, " ")
@@ -561,19 +634,21 @@ def getValueListForKey(path, key):
     multiLine = multiLine.replace("\r", " ")
     multiLine = multiLine.replace("\n", " ")
 
-    toks = multiLine.split(' ')
+    toks = multiLine.split(" ")
     for tok in toks:
-        if (len(tok) > 0):
+        if len(tok) > 0:
             valueList.append(tok)
 
     return valueList
 
+
 ########################################################################
 # Trim libs and apps to those required by distribution
 
+
 def trimToMakefiles(subDir):
 
-    if (options.verbose):
+    if options.verbose:
         print("Trimming unneeded dirs, subDir: " + subDir, file=logFp)
 
     # get list of subdirs in makefile
@@ -584,21 +659,21 @@ def trimToMakefiles(subDir):
     # need to allow upper and lower case Makefile (makefile or Makefile)
     subNameList = getValueListForKey("makefile", "SUB_DIRS")
     if not subNameList:
-        if (options.verbose):
+        if options.verbose:
             print("Trying uppercase Makefile ... ", file=logFp)
         subNameList = getValueListForKey("Makefile", "SUB_DIRS")
-    
+
     for subName in subNameList:
-        if (os.path.isdir(subName)):
-            if (options.verbose):
+        if os.path.isdir(subName):
+            if options.verbose:
                 print("  need sub dir: " + subName, file=logFp)
-            
+
     # get list of files in subDir
 
     entries = os.listdir(dirPath)
     for entry in entries:
         theName = os.path.join(dirPath, entry)
-        if (options.verbose):
+        if options.verbose:
             print("considering: " + theName, file=logFp)
         if (entry == "perl5") or (entry == "scripts") or (entry == "include"):
             # always keep scripts directories
@@ -606,25 +681,27 @@ def trimToMakefiles(subDir):
         if (entry == "images") or (entry == "resources"):
             # always keep QT resources
             continue
-        if (os.path.isdir(theName)):
-            if (entry not in subNameList):
-                if (options.verbose):
+        if os.path.isdir(theName):
+            if entry not in subNameList:
+                if options.verbose:
                     print("discarding it", file=logFp)
                 shutil.rmtree(theName)
             else:
-                if (options.verbose):
+                if options.verbose:
                     print("keeping it and recursing", file=logFp)
                 # check this child's required subdirectories (recurse)
                 trimToMakefiles(os.path.join(subDir, entry))
 
+
 ########################################################################
 # build netCDF
+
 
 def buildNetcdf():
 
     os.chdir(netcdfDir)
 
-    if (package == "lrose-cidd"):
+    if package == "lrose-cidd":
         shellCmd("./build_and_install_netcdf.cidd_linux32 -x " + prefixDir)
     else:
         if sys.platform == "darwin":
@@ -632,7 +709,7 @@ def buildNetcdf():
         else:
             shellCmd("./build_and_install_netcdf -x " + prefixDir)
 
-    if (package == "lrose-cidd"):
+    if package == "lrose-cidd":
         shellCmd("./build_and_install_netcdf.cidd_linux32 -x " + options.netcdfPrefix)
     else:
         if sys.platform == "darwin":
@@ -640,8 +717,10 @@ def buildNetcdf():
         else:
             shellCmd("./build_and_install_netcdf -x " + options.netcdfPrefix)
 
+
 ########################################################################
 # build package
+
 
 def buildPackage():
 
@@ -649,33 +728,47 @@ def buildPackage():
 
     # set the environment
 
-    if (options.installAllRuntimeLibs or options.installLroseRuntimeLibs):
-        os.environ["LDFLAGS"] = "-L" + prefixLibDir + " " + \
-            "-Wl,--enable-new-dtags," + \
-            "-rpath," + \
-            "'$$ORIGIN/" + runtimeLibRelDir + \
-            ":$$ORIGIN/../lib" + \
-            ":" + prefixLibDir + \
-            ":" + prefixLibDir + "'"
+    if options.installAllRuntimeLibs or options.installLroseRuntimeLibs:
+        os.environ["LDFLAGS"] = (
+            "-L"
+            + prefixLibDir
+            + " "
+            + "-Wl,--enable-new-dtags,"
+            + "-rpath,"
+            + "'$$ORIGIN/"
+            + runtimeLibRelDir
+            + ":$$ORIGIN/../lib"
+            + ":"
+            + prefixLibDir
+            + ":"
+            + prefixLibDir
+            + "'"
+        )
     else:
-        if (not options.noRpath):
-            os.environ["LDFLAGS"] = "-L" + prefixLibDir + " " + \
-                "-Wl,--enable-new-dtags," + \
-                "-rpath," + \
-                "'" + prefixLibDir + "'"
+        if not options.noRpath:
+            os.environ["LDFLAGS"] = (
+                "-L"
+                + prefixLibDir
+                + " "
+                + "-Wl,--enable-new-dtags,"
+                + "-rpath,"
+                + "'"
+                + prefixLibDir
+                + "'"
+            )
 
-    if (sys.platform == "darwin"):
+    if sys.platform == "darwin":
         os.environ["PKG_CONFIG_PATH"] = "/usr/local/opt/qt/lib/pkgconfig"
 
     # print out environment
 
-    logPath = prepareLogFile("print-environment");
+    logPath = prepareLogFile("print-environment")
     cmd = "env"
     shellCmd(cmd)
 
     # create build dir, run cmake there
-    
-    logPath = prepareLogFile("run-cmake");
+
+    logPath = prepareLogFile("run-cmake")
     cmakeBuildDir = os.path.join(coreDir, "cmake_build_dir")
     os.makedirs(cmakeBuildDir, exist_ok=True)
     os.chdir(cmakeBuildDir)
@@ -685,103 +778,106 @@ def buildPackage():
     cmd = cmd + " -DLDFLAGS=" + prefixLibDir
     cmd = cmd + " .."
     shellCmd(cmd)
-    
+
     # perform the build
 
-    logPath = prepareLogFile("do-build");
+    logPath = prepareLogFile("do-build")
     cmd = "make -j 8"
-    if (options.verboseMake):
+    if options.verboseMake:
         cmd = cmd + " VERBOSE=1"
     shellCmd(cmd)
 
     # install
 
-    logPath = prepareLogFile("do-install");
+    logPath = prepareLogFile("do-install")
     cmd = "make -j 8 install/strip"
-    if (options.verboseMake):
+    if options.verboseMake:
         cmd = cmd + " VERBOSE=1"
     shellCmd(cmd)
+
 
 ########################################################################
 # perform share install
 
+
 def doShareInstall():
 
     # install docs etc<
-    
+
     os.chdir(coreDir)
 
     shellCmd("rsync -av LICENSE.txt " + prefixDir)
     shellCmd("rsync -av release_notes " + prefixDir)
     shellCmd("rsync -av docs " + prefixDir)
 
-    if (package == "lrose-cidd"):
-        shellCmd("rsync -av ./codebase/apps/cidd/src/CIDD/scripts " +
-                 prefixDir)
+    if package == "lrose-cidd":
+        shellCmd("rsync -av ./codebase/apps/cidd/src/CIDD/scripts " + prefixDir)
 
     # install color scales
 
-    if (os.path.isdir(displaysDir)):
+    if os.path.isdir(displaysDir):
         os.chdir(displaysDir)
         shellCmd("rsync -av color_scales " + prefixShareDir)
 
+
 ########################################################################
 # check the install
+
 
 def checkInstall():
 
     os.chdir(coreDir)
     print(("============= Checking libs for " + package + " ============="))
-    shellCmd("./build/scripts/checkLibs.py" + \
-             " --prefix " + prefixDir + \
-             " --package " + package)
+    shellCmd("./build/scripts/checkLibs.py" + " --prefix " + prefixDir + " --package " + package)
     print("====================================================")
 
     print(("============= Checking apps for " + package + " ============="))
-    shellCmd("./build/scripts/checkApps.py" + \
-             " --prefix " + prefixDir + \
-             " --package " + package)
+    shellCmd("./build/scripts/checkApps.py" + " --prefix " + prefixDir + " --package " + package)
     print("====================================================")
-    
+
     print("**************************************************")
     print("*** Done building auto release *******************")
     print(("*** Installed in dir: " + prefixDir + " ***"))
     print("**************************************************")
 
+
 ########################################################################
 # prune empty dirs
+
 
 def prune(tree):
 
     # walk the tree
-    if (os.path.isdir(tree)):
+    if os.path.isdir(tree):
         contents = os.listdir(tree)
 
-        if (len(contents) == 0):
-            if (options.verbose):
+        if len(contents) == 0:
+            if options.verbose:
                 print("pruning empty dir: " + tree, file=logFp)
             shutil.rmtree(tree)
         else:
             for l in contents:
                 # remove CVS directories
-                if (l == "CVS") or (l == ".git"): 
-                    thepath = os.path.join(tree,l)
-                    if (options.verbose):
+                if (l == "CVS") or (l == ".git"):
+                    thepath = os.path.join(tree, l)
+                    if options.verbose:
                         print("pruning dir: " + thepath, file=logFp)
                     shutil.rmtree(thepath)
                 else:
-                    thepath = os.path.join(tree,l)
-                    if (os.path.isdir(thepath)):
+                    thepath = os.path.join(tree, l)
+                    if os.path.isdir(thepath):
                         prune(thepath)
             # check if this tree is now empty
             newcontents = os.listdir(tree)
-            if (len(newcontents) == 0):
-                if (options.verbose):
+            if len(newcontents) == 0:
+                if options.verbose:
                     print("pruning empty dir: " + tree, file=logFp)
                 shutil.rmtree(tree)
 
+
 ########################################################################
 # get the OS type from the /etc/os-release file in linux
+
 
 def getOSType():
 
@@ -793,31 +889,35 @@ def getOSType():
         osId = "darwin"
         return
 
-    if (os.path.exists("/etc/os-release") == False):
+    if os.path.exists("/etc/os-release") == False:
         return
 
     osrelease_file = open("/etc/os-release", "rt")
     lines = osrelease_file.readlines()
     osrelease_file.close()
     for line in lines:
-        if (line.find('ID=') == 0):
-            osId = line.split('=')[1].replace('"', '').strip()
-        elif (line.find('VERSION_ID=') == 0):
-            osVersion = line.split('=')[1].replace('"', '').strip()
+        if line.find("ID=") == 0:
+            osId = line.split("=")[1].replace('"', "").strip()
+        elif line.find("VERSION_ID=") == 0:
+            osVersion = line.split("=")[1].replace('"', "").strip()
+
 
 ########################################################################
 # prepare log file
+
 
 def prepareLogFile(logFileName):
 
     global logFp
 
     logFp.close()
-    logPath = os.path.join(options.logDir, logFileName + ".log");
-    if (logPath.find('no-logging') >= 0):
+    logPath = os.path.join(options.logDir, logFileName + ".log")
+    if logPath.find("no-logging") >= 0:
         return logPath
-    print("========================= " + logFileName + " =========================", file=sys.stderr)
-    if (options.verbose):
+    print(
+        "========================= " + logFileName + " =========================", file=sys.stderr
+    )
+    if options.verbose:
         print("====>> Creating log file: " + logPath + " <<==", file=sys.stderr)
     logFp = open(logPath, "w+")
     logFp.write("===========================================\n")
@@ -826,16 +926,18 @@ def prepareLogFile(logFileName):
 
     return logPath
 
+
 ########################################################################
 # Run a command in a shell, wait for it to complete
+
 
 def shellCmd(cmd):
 
     print("Running cmd:", cmd, file=sys.stderr)
-    
-    if (options.verbose):
+
+    if options.verbose:
         cmdToRun = cmd
-    elif (logPath.find('no-logging') >= 0):
+    elif logPath.find("no-logging") >= 0:
         cmdToRun = cmd
     else:
         print("Log file is:", logPath, file=sys.stderr)
@@ -848,16 +950,17 @@ def shellCmd(cmd):
             print("Child exited with code: ", retcode, file=sys.stderr)
             sys.exit(1)
         else:
-            if (options.verbose):
+            if options.verbose:
                 print("Child returned code: ", retcode, file=sys.stderr)
     except OSError as e:
         print("Execution failed:", e, file=sys.stderr)
         sys.exit(1)
 
     print("    done", file=sys.stderr)
-    
+
+
 ########################################################################
 # Run - entry point
 
 if __name__ == "__main__":
-   main()
+    main()
