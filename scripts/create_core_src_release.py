@@ -320,7 +320,7 @@ def gitCheckout():
 
     os.chdir(tmpDir)
     shellCmd("git clone --branch " + options.tag +
-             " https://github.com/NCAR/lrose-core")
+             " https://github.com/MetServiceDev/lrose-core")
     shellCmd("git clone https://github.com/NCAR/lrose-netcdf")
     shellCmd("git clone https://github.com/NCAR/lrose-displays")
 
